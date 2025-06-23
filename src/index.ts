@@ -1,75 +1,59 @@
-import { McpAgent } from "agents/mcp";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { z } from "zod";
+import { McpAgent } from "agents/mcp";
 
-// Define our MCP agent with tools
+import {
+  convertCurrency,
+  convertCurrencySchema,
+} from "./tools/convert_currency";
+import { getCurrencies, getCurrenciesSchema } from "./tools/get_currencies";
+import {
+  getHistoricalRates,
+  getHistoricalRatesSchema,
+} from "./tools/get_historical_rates";
+import {
+  getLatestRates,
+  getLatestRatesSchema,
+} from "./tools/get_latest_rates";
+
 export class MyMCP extends McpAgent {
-	server = new McpServer({
-		name: "Authless Calculator",
-		version: "1.0.0",
-	});
+  server = new McpServer({
+    name: "Currency Converter",
+    version: "1.0.0",
+  });
 
-	async init() {
-		// Simple addition tool
-		this.server.tool(
-			"add",
-			{ a: z.number(), b: z.number() },
-			async ({ a, b }) => ({
-				content: [{ type: "text", text: String(a + b) }],
-			})
-		);
+  async init() {
+    this.server.tool("convert_currency", convertCurrencySchema, async (input) =>
+      convertCurrency(input),
+    );
 
-		// Calculator tool with multiple operations
-		this.server.tool(
-			"calculate",
-			{
-				operation: z.enum(["add", "subtract", "multiply", "divide"]),
-				a: z.number(),
-				b: z.number(),
-			},
-			async ({ operation, a, b }) => {
-				let result: number;
-				switch (operation) {
-					case "add":
-						result = a + b;
-						break;
-					case "subtract":
-						result = a - b;
-						break;
-					case "multiply":
-						result = a * b;
-						break;
-					case "divide":
-						if (b === 0)
-							return {
-								content: [
-									{
-										type: "text",
-										text: "Error: Cannot divide by zero",
-									},
-								],
-							};
-						result = a / b;
-						break;
-				}
-				return { content: [{ type: "text", text: String(result) }] };
-			}
-		);
-	}
+    this.server.tool("get_latest_rates", getLatestRatesSchema, async (input) =>
+      getLatestRates(input),
+    );
+
+    this.server.tool("get_currencies", getCurrenciesSchema, async (input) =>
+      getCurrencies(input),
+    );
+
+    this.server.tool(
+      "get_historical_rates",
+      getHistoricalRatesSchema,
+      async (input) => getHistoricalRates(input),
+    );
+  }
 }
 
 export default {
-	fetch(request: Request, env: Env, ctx: ExecutionContext) {
-		const url = new URL(request.url);
+  fetch(request: Request, env: Env, ctx: ExecutionContext) {
+    const url = new URL(request.url);
 
-		if (url.pathname === "/sse" || url.pathname === "/sse/message") {
-			return MyMCP.serveSSE("/sse").fetch(request, env, ctx);
-		}
+    if (url.pathname === "/sse" || url.pathname === "/sse/message") {
+      return MyMCP.serveSSE("/sse").fetch(request, env, ctx);
+    }
 
-		if (url.pathname === "/mcp") {
-			return MyMCP.serve("/mcp").fetch(request, env, ctx);
-		}
+    if (url.pathname === "/mcp") {
+      return MyMCP.serve("/mcp").fetch(request, env, ctx);
+    }
 
-		return new Response("Not found", { status: 404 });
-	},
+    return new Response("Not found", { status: 404 });
+  },
 };

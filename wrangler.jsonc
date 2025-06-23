@@ -6,15 +6,11 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "my-mcp-server",
 	"main": "src/index.ts",
-	"compatibility_date": "2025-03-10",
-	"compatibility_flags": [
-		"nodejs_compat"
-	],
+	"compatibility_date": "2025-04-01",
+	"compatibility_flags": ["nodejs_compat", "nodejs_compat_populate_process_env"],
 	"migrations": [
 		{
-			"new_sqlite_classes": [
-				"MyMCP"
-			],
+			"new_sqlite_classes": ["MyMCP"],
 			"tag": "v1"
 		}
 	],
