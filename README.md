@@ -14,7 +14,7 @@ Right now many clients do not offer support for streamable http, so you can use 
   "mcpServers": {
     "currency-conversion": {
       "command": "npx",
-      "args": ["mcp-remote", "http://localhost:8787/sse"]
+      "args": ["mcp-remote", "https://currency-mcp.wesbos.com/sse"]
     }
   },
 }
