@@ -23,5 +23,6 @@
 		"@types/node": "^24.0.3",
 		"typescript": "^5.8.3",
 		"wrangler": "^4.20.5"
-	}
+	},
+	"packageManager": "pnpm@9.10.0+sha1.216899f511c8dfde183c7cb50b69009c779534a8"
 }
