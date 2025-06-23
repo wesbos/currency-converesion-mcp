@@ -5,7 +5,7 @@ An MCP server that provides real-time currency conversion and exchange rate data
 
 ## Using
 
-There are two endpoints - `/mcp` for streamable HTTP and `/sse` for legacy HTTP+SSE.
+There are two endpoints - `/mcp` for [streamable HTTP](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http) and `/sse` for legacy HTTP+SSE.
 
 Right now many clients do not offer support for streamable http, so you can use it with a proxy:
 
